@@ -1,0 +1,6 @@
+{
+  "name": "RPG de Mundo Abierto",
+  "description": "Un prototipo de videojuego RPG de mundo abierto con perspectiva top-down, sistema de colisiones, NPCs interactivos, barra de vida y energía, minimapa y persistencia de progreso con Firebase y Google Auth.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

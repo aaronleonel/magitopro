@@ -1,0 +1,83 @@
+{
+  "entities": {
+    "Save": {
+      "title": "Save",
+      "description": "User game progress and player state",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The UID of the user who owns this progress save"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The name of the player"
+        },
+        "posX": {
+          "type": "number",
+          "description": "The X coordinate of the player in the world"
+        },
+        "posY": {
+          "type": "number",
+          "description": "The Y coordinate of the player in the world"
+        },
+        "hp": {
+          "type": "number",
+          "description": "Current HP"
+        },
+        "maxHp": {
+          "type": "number",
+          "description": "Maximum HP"
+        },
+        "mana": {
+          "type": "number",
+          "description": "Current Mana"
+        },
+        "maxMana": {
+          "type": "number",
+          "description": "Maximum Mana"
+        },
+        "level": {
+          "type": "number",
+          "description": "Player level"
+        },
+        "exp": {
+          "type": "number",
+          "description": "Player experience"
+        },
+        "interactedNPCs": {
+          "type": "array",
+          "description": "List of NPC IDs the player has talked to"
+        },
+        "inventory": {
+          "type": "array",
+          "description": "List of items in the player's inventory"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this save was last updated"
+        }
+      },
+      "required": [
+        "userId",
+        "posX",
+        "posY",
+        "hp",
+        "maxHp",
+        "mana",
+        "maxMana",
+        "level",
+        "exp",
+        "interactedNPCs",
+        "inventory"
+      ]
+    }
+  },
+  "firestore": {
+    "saves/{userId}": {
+      "schema": "Save",
+      "description": "Progress saves for each individual user authenticated in the game"
+    }
+  }
+}
