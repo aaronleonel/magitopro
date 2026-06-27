@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Tile, PlayerState, NPC, InventoryItem, Enemy } from '../types';
 import { MAP_SIZE, TILE_SIZE, WORLD_SIZE, checkCollision } from '../utils/mapGenerator';
-import { Sparkles, Trophy, BookOpen, Volume2, VolumeX, Backpack, X, Shield, Sword, Heart, Key, Star, HelpCircle } from 'lucide-react';
+import { Sparkles, Trophy, BookOpen, Volume2, VolumeX, Backpack, X, Shield, Sword, Heart, Key, Star, HelpCircle, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface GameBoardProps {
   playerState: PlayerState;
@@ -126,6 +126,23 @@ export default function GameBoard({
   // Sound FX and status effects
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [recentLog, setRecentLog] = useState<string>('¡Bienvenido al mundo RPG! Explora el mapa.');
+  const [showTouchControls, setShowTouchControls] = useState(false);
+  const [isPortrait, setIsPortrait] = useState(false);
+
+  useEffect(() => {
+    const isMobileSize = window.innerWidth < 768;
+    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (isMobileSize || hasTouch) {
+      setShowTouchControls(true);
+    }
+
+    const checkOrientation = () => {
+      setIsPortrait(window.innerHeight > window.innerWidth);
+    };
+    checkOrientation();
+    window.addEventListener('resize', checkOrientation);
+    return () => window.removeEventListener('resize', checkOrientation);
+  }, []);
 
   // Initialize collectable crystals randomly around the map in safe spots
   useEffect(() => {
@@ -361,6 +378,38 @@ export default function GameBoard({
       }
     } catch (e) {
       console.warn("Audio Context blocked or not supported:", e);
+    }
+  };
+
+  const handleTouchStart = (dir: 'up' | 'down' | 'left' | 'right') => {
+    if (dir === 'up') {
+      keysPressed.current['w'] = true;
+      keysPressed.current['arrowup'] = true;
+    } else if (dir === 'down') {
+      keysPressed.current['s'] = true;
+      keysPressed.current['arrowdown'] = true;
+    } else if (dir === 'left') {
+      keysPressed.current['a'] = true;
+      keysPressed.current['arrowleft'] = true;
+    } else if (dir === 'right') {
+      keysPressed.current['d'] = true;
+      keysPressed.current['arrowright'] = true;
+    }
+  };
+
+  const handleTouchEnd = (dir: 'up' | 'down' | 'left' | 'right') => {
+    if (dir === 'up') {
+      keysPressed.current['w'] = false;
+      keysPressed.current['arrowup'] = false;
+    } else if (dir === 'down') {
+      keysPressed.current['s'] = false;
+      keysPressed.current['arrowdown'] = false;
+    } else if (dir === 'left') {
+      keysPressed.current['a'] = false;
+      keysPressed.current['arrowleft'] = false;
+    } else if (dir === 'right') {
+      keysPressed.current['d'] = false;
+      keysPressed.current['arrowright'] = false;
     }
   };
 
@@ -1543,6 +1592,17 @@ export default function GameBoard({
         {/* Audio Toggle & Quick Settings */}
         <div className="flex gap-2">
           <button
+            onClick={() => setShowTouchControls(!showTouchControls)}
+            className={`px-2.5 py-2 rounded-lg border transition-all shadow-md cursor-pointer flex items-center gap-1.5 font-mono text-xs ${
+              showTouchControls 
+                ? 'bg-cyan-950/90 border-cyan-500/80 text-cyan-400 font-semibold' 
+                : 'bg-slate-900/90 hover:bg-slate-800/90 border-slate-700/60 text-slate-400 hover:text-slate-200'
+            }`}
+            title="Alternar controles táctiles"
+          >
+            <span>🎮 {showTouchControls ? 'Táctil' : 'Teclado'}</span>
+          </button>
+          <button
             onClick={() => setShowInventory(!showInventory)}
             className="px-2.5 py-2 bg-slate-900/90 hover:bg-slate-800/90 rounded-lg border border-slate-700/60 text-slate-300 transition-all shadow-md cursor-pointer flex items-center gap-1.5 font-mono text-xs"
             title="Ver Inventario"
@@ -1712,6 +1772,112 @@ export default function GameBoard({
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Touch Controls Overlay */}
+      {showTouchControls && (
+        <>
+          {/* Left Side: Virtual D-Pad */}
+          <div className="absolute bottom-4 left-4 z-30 flex flex-col items-center gap-1 md:gap-1.5 pointer-events-auto select-none">
+            {/* UP button */}
+            <button
+              onPointerDown={(e) => { e.preventDefault(); handleTouchStart('up'); }}
+              onPointerUp={(e) => { e.preventDefault(); handleTouchEnd('up'); }}
+              onPointerLeave={(e) => { e.preventDefault(); handleTouchEnd('up'); }}
+              className="w-10 h-10 md:w-14 md:h-14 bg-slate-900/95 border-2 border-slate-700/80 active:bg-cyan-600 active:border-cyan-400 rounded-xl flex items-center justify-center text-slate-300 shadow-xl touch-none transition-all active:scale-90"
+            >
+              <ArrowUp className="w-5 h-5 md:w-6 md:h-6" />
+            </button>
+            
+            {/* LEFT / CENTER / RIGHT */}
+            <div className="flex gap-1 md:gap-1.5">
+              <button
+                onPointerDown={(e) => { e.preventDefault(); handleTouchStart('left'); }}
+                onPointerUp={(e) => { e.preventDefault(); handleTouchEnd('left'); }}
+                onPointerLeave={(e) => { e.preventDefault(); handleTouchEnd('left'); }}
+                className="w-10 h-10 md:w-14 md:h-14 bg-slate-900/95 border-2 border-slate-700/80 active:bg-cyan-600 active:border-cyan-400 rounded-xl flex items-center justify-center text-slate-300 shadow-xl touch-none transition-all active:scale-90"
+              >
+                <ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />
+              </button>
+              
+              {/* Decorative center piece */}
+              <div className="w-10 h-10 md:w-14 md:h-14 bg-slate-950/90 border-2 border-slate-800 rounded-xl flex items-center justify-center text-slate-600 shadow-inner">
+                <div className="w-2 h-2 rounded-full bg-slate-700 animate-pulse" />
+              </div>
+
+              <button
+                onPointerDown={(e) => { e.preventDefault(); handleTouchStart('right'); }}
+                onPointerUp={(e) => { e.preventDefault(); handleTouchEnd('right'); }}
+                onPointerLeave={(e) => { e.preventDefault(); handleTouchEnd('right'); }}
+                className="w-10 h-10 md:w-14 md:h-14 bg-slate-900/95 border-2 border-slate-700/80 active:bg-cyan-600 active:border-cyan-400 rounded-xl flex items-center justify-center text-slate-300 shadow-xl touch-none transition-all active:scale-90"
+              >
+                <ArrowRight className="w-5 h-5 md:w-6 md:h-6" />
+              </button>
+            </div>
+
+            {/* DOWN button */}
+            <button
+              onPointerDown={(e) => { e.preventDefault(); handleTouchStart('down'); }}
+              onPointerUp={(e) => { e.preventDefault(); handleTouchEnd('down'); }}
+              onPointerLeave={(e) => { e.preventDefault(); handleTouchEnd('down'); }}
+              className="w-10 h-10 md:w-14 md:h-14 bg-slate-900/95 border-2 border-slate-700/80 active:bg-cyan-600 active:border-cyan-400 rounded-xl flex items-center justify-center text-slate-300 shadow-xl touch-none transition-all active:scale-90"
+            >
+              <ArrowDown className="w-5 h-5 md:w-6 md:h-6" />
+            </button>
+          </div>
+
+          {/* Right Side: Virtual Action Buttons */}
+          <div className="absolute bottom-4 right-4 z-30 flex items-end gap-1.5 md:gap-3 pointer-events-auto select-none">
+            {/* Interact Button */}
+            <button
+              onPointerDown={(e) => { e.preventDefault(); handleInteractionRequest(); }}
+              className="w-11 h-11 md:w-15 md:h-15 bg-emerald-950/90 border-2 border-emerald-700/80 active:bg-emerald-600 active:border-emerald-400 rounded-full flex flex-col items-center justify-center text-emerald-200 shadow-lg touch-none transition-all active:scale-90"
+            >
+              <HelpCircle className="w-4 h-4 md:w-5 md:h-5 text-emerald-400" />
+              <span className="text-[7px] md:text-[9px] font-mono mt-0.5">Hablar [E]</span>
+            </button>
+
+            {/* Bag Button */}
+            <button
+              onPointerDown={(e) => { e.preventDefault(); setShowInventory(prev => !prev); }}
+              className="w-11 h-11 md:w-15 md:h-15 bg-amber-950/90 border-2 border-amber-700/80 active:bg-amber-600 active:border-amber-400 rounded-full flex flex-col items-center justify-center text-amber-200 shadow-lg touch-none transition-all active:scale-90"
+            >
+              <Backpack className="w-4 h-4 md:w-5 md:h-5 text-amber-500 animate-pulse" />
+              <span className="text-[7px] md:text-[9px] font-mono mt-0.5">Mochila [I]</span>
+            </button>
+
+            {/* Attack Button (Large/Primary) */}
+            <button
+              onPointerDown={(e) => { e.preventDefault(); performPlayerAttack(); }}
+              className="w-14 h-14 md:w-20 md:h-20 bg-rose-600/95 border-2 border-rose-400 hover:bg-rose-500 active:bg-rose-400 active:border-rose-300 rounded-full flex flex-col items-center justify-center text-white shadow-2xl touch-none transition-all active:scale-90 relative"
+              style={{ boxShadow: '0 0 15px rgba(239, 68, 68, 0.4)' }}
+            >
+              <Sword className="w-6 h-6 md:w-8 md:h-8 text-white animate-pulse" />
+              <span className="text-[8px] md:text-[9px] font-bold tracking-wider font-mono mt-0.5 uppercase text-rose-100">Atacar</span>
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* Portrait warning overlay with rotation reminder */}
+      {showTouchControls && isPortrait && (
+        <div className="absolute inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center select-none animate-fade-in">
+          <div className="p-4 bg-cyan-500/10 border border-cyan-500/20 rounded-full text-cyan-400 mb-4 animate-bounce">
+            <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2zM3 9l3-3m0 0l3 3M6 6v6" />
+            </svg>
+          </div>
+          <h3 className="text-base font-bold text-slate-100 mb-2">Gira tu pantalla</h3>
+          <p className="text-xs text-slate-400 max-w-xs leading-relaxed">
+            Para la mejor experiencia de juego RPG, te recomendamos girar tu dispositivo a <strong className="text-cyan-400">modo horizontal (Landscape)</strong>.
+          </p>
+          <button
+            onClick={() => setIsPortrait(false)}
+            className="mt-6 px-4 py-2 bg-slate-900 border border-slate-700 text-xs text-slate-300 rounded-xl active:bg-slate-800 transition-colors cursor-pointer"
+          >
+            Ignorar y jugar de todos modos
+          </button>
         </div>
       )}
     </div>
