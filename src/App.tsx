@@ -227,23 +227,23 @@ export default function App() {
     <div className="min-h-screen bg-slate-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(30,41,59,0.5),rgba(2,6,23,1))] text-slate-100 flex flex-col antialiased">
       
       {/* Immersive Medieval HUD Header */}
-      <header className="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md px-6 py-4 flex items-center justify-between sticky top-0 z-40">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.15)]">
-            <Gamepad2 className="w-6 h-6 animate-pulse" />
+      <header className="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md px-3 py-1.5 sm:px-6 sm:py-3.5 flex items-center justify-between sticky top-0 z-40">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.15)]">
+            <Gamepad2 className="w-4 h-4 sm:w-6 sm:h-6 animate-pulse" />
           </div>
           <div>
-            <h1 className="font-extrabold text-lg md:text-xl tracking-tight bg-gradient-to-r from-slate-100 via-amber-200 to-amber-500 bg-clip-text text-transparent">
+            <h1 className="font-extrabold text-xs sm:text-base md:text-xl tracking-tight bg-gradient-to-r from-slate-100 via-amber-200 to-amber-500 bg-clip-text text-transparent">
               Pixel RPG: Mundo Abierto
             </h1>
-            <p className="text-[10px] md:text-xs font-mono text-slate-400">
+            <p className="text-[8px] sm:text-[10px] md:text-xs font-mono text-slate-400 hidden xs:block">
               Desarrollado en React y Firebase Firestore
             </p>
           </div>
         </div>
 
         {/* Sync / Menu actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
           {user ? (
             <div className="hidden sm:flex items-center gap-2 bg-emerald-950/40 border border-emerald-800/50 px-3 py-1.5 rounded-lg text-xs font-mono text-emerald-400">
               <Cloud className="w-4 h-4 animate-bounce" />
@@ -257,7 +257,7 @@ export default function App() {
 
           <button
             onClick={() => setIsMenuOpen(prev => !prev)}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 hover:text-white rounded-lg border border-slate-700/60 font-semibold text-xs transition-all active:translate-y-0.5 shadow-md cursor-pointer"
+            className="flex items-center gap-1 px-2.5 py-1 sm:px-4 sm:py-2 bg-slate-800 hover:bg-slate-700 hover:text-white rounded-lg border border-slate-700/60 font-semibold text-[10px] sm:text-xs transition-all active:translate-y-0.5 shadow-md cursor-pointer"
           >
             {isMenuOpen ? 'Reanudar' : 'Menú & Cuentas'}
           </button>
@@ -265,7 +265,7 @@ export default function App() {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-grow flex items-center justify-center p-4 md:p-6 relative max-w-7xl mx-auto w-full">
+      <main className="flex-grow flex items-center justify-center p-1 sm:p-4 md:p-6 relative max-w-7xl mx-auto w-full">
         <div className="w-full relative flex flex-col items-center">
           
           {/* Game Canvas Container */}

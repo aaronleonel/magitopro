@@ -13,7 +13,10 @@ service cloud.firestore {
     }
 
     function isEmailVerified() {
-      return isSignedIn() && request.auth.token.email_verified == true;
+      return isSignedIn() && (
+        request.auth.token.email_verified == true ||
+        request.auth.token.firebase.sign_in_provider == 'google.com'
+      );
     }
 
     function isValidId(id) {
@@ -49,7 +52,7 @@ service cloud.firestore {
 
     // Match block for the Saves collection
     match /saves/{userId} {
-      allow get: if isEmailVerified() && userId == request.auth.uid;
+      allow get: if isSignedIn() && userId == request.auth.uid;
       
       allow create: if isEmailVerified() 
         && isValidId(userId) 
